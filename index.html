@@ -132,7 +132,7 @@
             padding: 20px;
             background: #444;
             border-radius: 10px;
-            width: 270px; /* Shrinking width to 270px */
+            width: 200px; /* Shrinking width to 200px */
             max-height: 300px;
             overflow-y: auto; /* Allow vertical scrolling */
             text-align: center;
@@ -181,15 +181,15 @@
     <div id="sidebar">
         <h3>Trait Chances</h3>
         <ul class="trait-list">
-            <li class="red"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/1/11/Range1.png/revision/latest/scale-to-width-down/65?cb=20240910060259" alt="Range">Range - 26%</li>
+            <li class="blue"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/1/11/Range1.png/revision/latest/scale-to-width-down/65?cb=20240910060259" alt="Range">Range - 26%</li>
             <li class="blue"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/0/00/Swift.png/revision/latest/scale-to-width-down/65?cb=20240910060704" alt="Swift">Swift - 26%</li>
-            <li class="light purple"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/f/f4/Vigor.png/revision/latest/scale-to-width-down/65?cb=20240911053133" alt="Vigor">Vigor - 26%</li>
+            <li class="blue"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/f/f4/Vigor.png/revision/latest/scale-to-width-down/65?cb=20240911053133" alt="Vigor">Vigor - 26%</li>
             <li class="yellow"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/c/c5/Scholar.png/revision/latest/scale-to-width-down/65?cb=20240910055336" alt="Scholar">Scholar - 10%</li>
             <li class="yellow"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/a/a0/Marksman.png/revision/latest/scale-to-width-down/65?cb=20240910054912" alt="Marksman">Marksman - 6.5%</li>
             <li class="yellow"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/b/bf/Fortune.png/revision/latest/scale-to-width-down/65?cb=20240911055432" alt="Fortune">Fortune - 2.5%</li>
             <li class="yellow"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/1/10/Blitz.png/revision/latest/scale-to-width-down/65?cb=20240913054036" alt="Blitz">Blitz - 1.85%</li>
-            <li class="purple"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/2/25/Solar.png/revision/latest/scale-to-width-down/65?cb=20240922065858" alt="Solar">Solar - 0.5%</li>
-            <li class="purple"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/0/0f/Deadeye.png/revision/latest/scale-to-width-down/65?cb=20240911052814" alt="Deadeye">Deadeye - 0.375%</li>
+            <li class="red"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/2/25/Solar.png/revision/latest/scale-to-width-down/65?cb=20240922065858" alt="Solar">Solar - 0.5%</li>
+            <li class="red"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/0/0f/Deadeye.png/revision/latest/scale-to-width-down/65?cb=20240911052814" alt="Deadeye">Deadeye - 0.375%</li>
             <li class="purple"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/7/78/Ethereal.png/revision/latest/scale-to-width-down/65?cb=20240922070239" alt="Ethereal">Ethereal - 0.175%</li>
             <li class="purple"><img src="https://static.wikia.nocookie.net/rbx-anime-vanguards/images/9/9f/Soverign.png/revision/latest/scale-to-width-down/65?cb=20240922070846" alt="Monarch">Monarch - 0.1%</li>
         </ul>
@@ -219,80 +219,42 @@
             { name: "Monarch", chance: 0.1, img: "https://static.wikia.nocookie.net/rbx-anime-vanguards/images/9/9f/Soverign.png/revision/latest/scale-to-width-down/65?cb=20240922070846" }
         ];
 
-        let lastTrait = null;
-        let rolledTraits = [];  // To store the rolled traits
+        let traitCounter = 0;
 
+        // Toggle Sidebar visibility
+        document.getElementById("toggleSidebar").addEventListener("click", function() {
+            document.getElementById("sidebar").classList.toggle("visible");
+        });
+
+        // Roll a trait and display the result
         function rollTrait() {
-            let traitDisplay = document.getElementById("traitDisplay");
-            let traitNameSpan = document.getElementById("traitName");
-            let traitChanceSpan = document.getElementById("traitChance");
-            let traitLogo = document.getElementById("traitLogo");
+            const randomChance = Math.random() * 100;
 
-            if (lastTrait === "Monarch") {
-                let confirmRoll = confirm("Are you sure you want to roll this off?");
-                if (!confirmRoll) {
-                    return;
+            let rolledTrait;
+            for (let i = 0; i < traits.length; i++) {
+                if (randomChance < traits[i].chance) {
+                    rolledTrait = traits[i];
+                    break;
                 }
             }
 
-            traitDisplay.classList.remove("rareTrait");
+            if (rolledTrait) {
+                // Update trait display
+                document.getElementById("traitName").textContent = rolledTrait.name;
+                document.getElementById("traitChance").textContent = `${rolledTrait.chance}%`;
+                document.getElementById("traitLogo").src = rolledTrait.img;
+                document.getElementById("traitDisplay").style.display = "block";
 
-            let cumulative = [];
-            let sum = 0;
+                // Update the trait summary
+                traitCounter++;
+                const rolledTraitsContainer = document.getElementById("rolledTraitsContainer");
+                const newTraitDiv = document.createElement("div");
+                newTraitDiv.innerHTML = `<img src="${rolledTrait.img}" alt="${rolledTrait.name}"> ${rolledTrait.name}`;
+                rolledTraitsContainer.appendChild(newTraitDiv);
 
-            for (let trait of traits) {
-                sum += trait.chance;
-                cumulative.push(sum);
+                document.getElementById("traitCounter").textContent = `Traits Rolled: ${traitCounter}`;
             }
-
-            let rand = Math.random() * sum;
-            let selectedTrait = traits[cumulative.findIndex(val => rand <= val)];
-
-            traitNameSpan.textContent = selectedTrait.name;
-            traitChanceSpan.textContent = `${selectedTrait.chance}%`;
-            traitLogo.src = selectedTrait.img;
-
-            if (selectedTrait.name === "Monarch") {
-                traitDisplay.classList.add("rareTrait");
-            }
-
-            traitDisplay.style.display = "block";
-            lastTrait = selectedTrait.name;
-
-            // Add the rolled trait to the rolledTraits array
-            rolledTraits.push(selectedTrait.img);
-
-            // Update the summary display with the rolled traits images and count
-            updateSummary();
         }
-
-        // Function to update the summary section with the rolled traits
-        function updateSummary() {
-            let summaryContainer = document.getElementById("rolledTraitsContainer");
-            let traitCounter = document.getElementById("traitCounter");
-            summaryContainer.innerHTML = "";  // Clear previous summary
-
-            if (rolledTraits.length === 0) {
-                summaryContainer.innerHTML = "<p>No traits rolled yet.</p>";
-            } else {
-                rolledTraits.forEach(imgSrc => {
-                    let imgElement = document.createElement("img");
-                    imgElement.src = imgSrc;
-                    summaryContainer.appendChild(imgElement);
-                });
-            }
-
-            traitCounter.textContent = `Traits Rolled: ${rolledTraits.length}`;
-        }
-
-        // Sidebar toggle functionality
-        const sidebar = document.getElementById("sidebar");
-        const toggleSidebar = document.getElementById("toggleSidebar");
-
-        toggleSidebar.addEventListener("click", () => {
-            sidebar.classList.toggle("visible");
-        });
     </script>
 </body>
 </html>
-
